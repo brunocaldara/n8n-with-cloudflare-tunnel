@@ -1,0 +1,31 @@
+version: '3'
+services:
+  n8n-local:
+    container_name: n8n-local
+    image: n8nio/n8n
+    restart: unless-stopped
+    environment:
+      - GENERIC_TIMEZONE=America/Sao_Paulo
+      - N8N_RUNNERS_ENABLED="true"
+      - N8N_SECURE_COOKIE=false
+      - N8N_HOST="n8n.SEU_SITE_AQUI.com.br"
+      - N8N_PROTOCOL="https"
+      - NODE_ENV="production"
+      - WEBHOOK_URL="https://n8n.SEU_SITE_AQUI.com.br/"
+    ports:
+      - "5678:5678"
+    volumes:
+      - ./:/home/node/.n8n
+      - ./imgs:/imgs
+    networks:
+      - n8n_network
+  cloudfire-local:
+    container_name: cloudfire-local
+    image: cloudflare/cloudflared:latest
+    restart: unless-stopped
+    command: tunnel --no-autoupdate run --token SEU_TOKEN_AQUI
+    networks:
+      - n8n_network
+networks:
+  n8n_network:
+    driver: bridge
